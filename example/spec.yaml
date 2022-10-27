@@ -1,0 +1,52 @@
+specVersion: 0.1.0
+name: wipp/threshold
+version: 1.1.1
+container: wipp/wipp-thresh-plugin:1.1.1
+title: Thresholding Plugin
+description: Thresholding methods from ImageJ
+author: Mohammed Ouladi
+repository: https://github.com/usnistgov/WIPP-thresholding-plugin
+website: 
+citation: 
+hardware:
+  cpu:
+    type: any
+    min: 100
+  memory:
+    min: 100M
+  gpu:
+    type: any
+    min: 
+inputs:
+- name: input
+  required: true
+  label: Input image collection to be processed by this plugin
+  type: path
+- name: thresholdtype
+  required: true
+  label: Threshold type for this plugin
+  type: string
+- name: thresholdvalue
+  required: false
+  label: Threshold value for manual setting
+  type: number
+outputs:
+- name: output
+  required: true
+  label: Output data for the plugin
+  type: path
+ui: 
+- key: inputs.input
+  title: "Image Collection: "
+  description: "Pick a collection..."
+  type: text
+- key: inputs.thresholdtype
+  title: "Threshold Type"
+  description: "Pick a thresholdtype"
+  type: radio
+  fields: [Manual, IJDefault, Huang, Huang2, Intermodes, IsoData, Li, MaxEntropy, Mean, MinErrorI, Minimum, Moments, Otsu, Percentile, RenyiEntropy, Shanbhag, Triangle, Yen]
+- key: inputs.thresholdvalue
+  title: Threshold Value
+  description: 
+  type: number
+  condition: "inputs.thresholdtype=='Manual'"
