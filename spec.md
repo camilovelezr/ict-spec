@@ -5,11 +5,17 @@ This document defines an Interoperable Analysis Plugin (IAP). The goal of this d
 ## Table of Contents
 
 - [Overview](#overview)
+  - [Example](#example)
 - [Tool Packaging](#tool-packaging)
 - [Metadata](#metadata)
 - [Inputs and Outputs](#inputs-and-outputs)
+  - [Types and Formats](#types-and-formats)
+  - [Ontology](#ontology)
 - [User Interface](#user-interface)
-- [Hardware Requirements](#hardware-requirements)
+  - [Basic Types](#basic-ui-types)
+  - [Conditionals](#conditionals)
+  - [Custom Types](#custom-ui-types)
+- [Hardware Requirements](#hardware-requirements) [TODO]
 
 ## Notational Conventions
 
@@ -17,15 +23,15 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 ## Definitions
 
-Unless specified otherwise in the documentation, all usage of the words/phrases listed [here](definitions.md) are explicitly defined in manner which MAY or MAY NOT adhere to conventional or colloquial definitions.
+Unless specified otherwise in the documentation, all usage of the words/phrases listed [here](definitions.md) are explicitly defined in manner which may or may not adhere to conventional or colloquial definitions.
 
 # Overview
 
 An IAP refers to any analysis code packaged along with dependencies for the intent of dissemination and reusability. 
 
-An IAP is defined by two components: the specification and the tool. The specification is a YAML file that defines all parameters and requirements for a user interface to execute a predetermined piece of analysis code. Metadata contained within this file applies common [FAIR principles](https://www.go-fair.org/fair-principles/) of interoperability and reusability to discrete pieces of analysis code. The tool is a packaged piece of analysis code, complete with any and all dependencies needed to run the code. Each IAP MUST contain both a specification file and associated tool to be considered a complete IAP tool. 
+An IAP is defined by two components: the specification and the tool. The specification is a YAML file that defines all parameters and requirements for a user interface to execute a predetermined piece of analysis code. Metadata contained within this file applies common [FAIR principles](https://www.go-fair.org/fair-principles/) of interoperability and reusability to discrete pieces of analysis code. The tool is a packaged piece of analysis code, complete with any and all dependencies needed to run the code. Each IAP must contain both a specification file and associated tool to be considered a complete IAP tool. 
 
-Analysis code SHALL NOT be limited to any programming language, scientific domain, or use case. The IAP specification makes no requirements on the contents or scope of the analysis code, but provides some [best practices](best_practices.md), recommendations, and tips to make the most of the IAP specification.
+Analysis code should not be limited to any programming language, scientific domain, or use case. The IAP specification makes no requirements on the contents or scope of the analysis code, but provides some [best practices](best_practices.md), recommendations, and tips to make the most of the IAP specification.
 
 ### Example
 
@@ -42,12 +48,13 @@ documentation:
 citation: 
 hardware:
   cpu:
-    type: any
+    type: 
     min: 100
   memory:
     min: 100M
   gpu:
-    type: any
+    required: false
+    type: 
     min: 
 inputs:
 - name: input
@@ -96,12 +103,12 @@ ui:
 
 # Tool Packaging
 
-Each tool MUST be packaged as container image and hosted on a public or private image repository. The container MUST adhere to the [OCI Image Format](https://github.com/opencontainers/image-spec) and can be built using a number of different container engines, including (but not limited to): [Docker](https://www.docker.com/) and [Podman](https://podman.io/). Each container image MUST contain all necessary dependencies required to run the analysis code contained within, including both manually added binaries/source code and dependencies installed by package managers during the container build process. 
+Each tool must be packaged as container image and hosted on a public or private image repository. The container must adhere to the [OCI Image Format](https://github.com/opencontainers/image-spec) and can be built using a number of different container engines, including (but not limited to): [Docker](https://www.docker.com/) and [Podman](https://podman.io/). Each container image must contain all necessary dependencies required to run the analysis code contained within, including both manually added binaries/source code and dependencies installed by package managers during the container build process. 
 
-In order to maintain interoperability when consuming IAPs, there are several packaging requirements that each tool MUST follow:
+In order to maintain interoperability when consuming IAPs, there are several packaging requirements that each tool must follow:
 
-* All packaged tools should contain an entrypoint file, which serves to provide a standard point of entry to access and run analysis code. This entrypoint MUST be a shell script (`.sh`) that MUST sit in the root of the container image (`/entrypoint.sh`). This shell script SHOULD accept command line arguments and pass them appropriately to the analysis code bundled within the tool -- a reusable example is shown [here](example/entrypoint.sh).
-* References to file and directory paths within the container build instructions (ie. a Dockerfile) SHOULD use absolute paths and SHOULD NOT rely on changes to the working directory. For example, when building a container image using a Dockerfile, avoid using the `WORKDIR` instruction set to change the working directory to simplify relative path references.
+* All packaged tools should contain an entrypoint file, which serves to provide a standard point of entry to access and run analysis code. This entrypoint must be a shell script (`.sh`) that must sit in the root of the container image (`/entrypoint.sh`). This shell script should accept command line arguments and pass them appropriately to the analysis code bundled within the tool -- a reusable example is shown [here](example/entrypoint.sh).
+* References to file and directory paths within the container build instructions (ie. a Dockerfile) should use absolute paths and should not rely on changes to the working directory. For example, when building a container image using a Dockerfile, avoid using the `WORKDIR` instruction set to change the working directory to simplify relative path references.
 
 # Metadata
 
@@ -122,7 +129,7 @@ In order to maintain interoperability when consuming IAPs, there are several pac
 
 # Inputs and Outputs
 
-The inputs and outputs section of the IAP specification clearly defines all possible parameters available to configure on the IAP tool. These convey parameters passed directly to the IAP tool and SHOULD dictate exactly what the IAP tool is expecting.
+The inputs and outputs section of the IAP specification clearly defines all possible parameters available to configure on the IAP tool. These convey parameters passed directly to the IAP tool and should dictate exactly what the IAP tool is expecting.
 <br><br>
 | Field | Description | Example |
 | ----- | ----------- | ------: |
@@ -146,7 +153,7 @@ The basic types broadly categorize the format of the parameter passed to the IAP
 | path | String value that represents a file or directory path using Unix conventions | path/to/file/or/directory | 
 <br>
 
-The format defined by the `type` MAY be different from the representative format defined in the `format` field. For example, a tool may expect a JPEG image as an input. The tool is not configured, however, to accept a JPEG binary directly as a command line parameter, instead, the tool expects the input parameter to reference a file path to a JPEG image. In this case, the `type` of this input is `path`, while the `format` is `JPEG`. Appropriately defined `format` fields are used to ensure interoperability and findability for the IAP. When chaining two plugins together in sequence, the outputs of one plugin may be safely passed to the inputs of the second plugin based on matching or corresponding `format` fields. This functionality is not explicitly a part of the IAP and instead relies on the implementation and validation handled by IAP consumers -- user interface applications. The `format` field also relies heavily on a common [ontology](#ontology) -- a set of concepts and categories within a domain with explicitly defined properties and relationships to other items within the set. While the IAP is heavily reliant on a consistent and comprehensive ontology, the maintenance of such an ontology is NOT within the scope of the IAP. 
+The format defined by the `type` may be different from the representative format defined in the `format` field. For example, a tool may expect a JPEG image as an input. The tool is not configured, however, to accept a JPEG binary directly as a command line parameter, instead, the tool expects the input parameter to reference a file path to a JPEG image. In this case, the `type` of this input is `path`, while the `format` is `JPEG`. Appropriately defined `format` fields are used to ensure interoperability and findability for the IAP. When chaining two plugins together in sequence, the outputs of one plugin may be safely passed to the inputs of the second plugin based on matching or corresponding `format` fields. This functionality is not explicitly a part of the IAP and instead relies on the implementation and validation handled by IAP consumers -- user interface applications. The `format` field also relies heavily on a common [ontology](#ontology) -- a set of concepts and categories within a domain with explicitly defined properties and relationships to other items within the set. While the IAP is heavily reliant on a consistent and comprehensive ontology, the maintenance of such an ontology is not within the scope of the IAP. 
 
 ## Ontology
 
@@ -158,21 +165,22 @@ Metadata parameters are usually more ambiguous and are often not sufficiently de
 
 # User Interface
 
-Each input and output parameter defined in the IAP specifications MUST have a corresponding user interface (UI) configuration in the `ui` section of the specification file. This UI configuration will provide meaningful guidelines and standards for any specific UI application or platform that works with or uses IAPs. The standardization provided by the UI configuration section enables portability of the IAP across different organizations, institutes, or facilities. Any UI implementation can use IAPs given that they follow a loose set of guidelines, specifically related to [basic UI types](#basic-ui-types) and handling [conditionals](#conditionals).
+Each input and output parameter defined in the IAP specifications must have a corresponding user interface (UI) configuration in the `ui` section of the specification file. This UI configuration will provide meaningful guidelines and standards for any specific UI application or platform that works with or uses IAPs. The standardization provided by the UI configuration section enables portability of the IAP across different organizations, institutes, or facilities. Any UI implementation can use IAPs given that they follow a loose set of guidelines, specifically related to [basic UI types](#basic-ui-types) and handling [conditionals](#conditionals).
 <br><br>
 | Field | Description | Example |
-| ----- | ----------- | ------- |
+| ----- | ----------- | ------: |
 | key | Unique identifier to connect UI configuration to specific parameter, should take the form `<inputs or outputs>.<parameter name>` | inputs.thresholdvalue |
 | title | User friendly label used in UI | "Thresholding Value" |
 | description | Short user friendly instructions for selecting appropriate parameter | "Enter a threshold value" |
 | type | Defines the expected user interface based on a set of [basic UI types](#basic-ui-types) | number |
+| customType | Optional label for a [non-standard](#custom-ui-types) expected user interface | |
 | condition | [Conditional statement](#conditionals) that resolves to a boolean value based on UI configuration and selected value, used to dictate relationship between parameters | "inputs.thresholdtype=='Manual'" |
 | options | Basic UI type specific options | 
 <br>
 
 ## Basic UI Types
 
-The basic UI types define a set of interactive controls that enable users to control and configure IAP parameters. To enable compatibility across different applications and platforms the UI configurations of the IAP specification need to adhere to a standard set of basic UI types. The basic types cover most generic use cases across a broad range of input and output parameters. While any particular UI application is free to implement each type as they see fit, all applications and platforms that use IAPs MUST support each of the basic UI types. By dictating the control types and options, but not any implemention details, each UI application has degree of flexibility to implement UI that adheres to the IAP requirements without sacrificing client requirements or platform integrations. This also reduces the burden and amount of work for existing UI applications solutions to integrate with the IAP specification. The `path` type best highlights the utility of this flexibility across UI implementations. Taken at face value, the `path` type is simply a formatted string and in simple applications, can be implemented as a basic text input box. An integrated platform solution, on the other hand, may have all relevant files or data stored in aggregated and cataloged data lake. This implementation of the `path` type can be much complex, allowing users to find relevant files or data using metadata based filters, searches, and autocomplete functionalities. Finally, a desktop application designed for local execution may choose to implement the `path` type using a local file browser for files or data stored on the client machine.
+The basic UI types define a set of interactive controls that enable users to control and configure IAP parameters. To enable compatibility across different applications and platforms the UI configurations of the IAP specification need to adhere to a standard set of basic UI types. The basic types cover most generic use cases across a broad range of input and output parameters. While any particular UI application is free to implement each type as they see fit, all applications and platforms that use IAPs must support each of the basic UI types. By dictating the control types and options, but not any implemention details, each UI application has degree of flexibility to implement UI that adheres to the IAP requirements without sacrificing client requirements or platform integrations. This also reduces the burden and amount of work for existing UI applications solutions to integrate with the IAP specification. The `path` type best highlights the utility of this flexibility across UI implementations. Taken at face value, the `path` type is simply a formatted string and in simple applications, can be implemented as a basic text input box. An integrated platform solution, on the other hand, may have all relevant files or data stored in aggregated and cataloged data lake. This implementation of the `path` type can be much complex, allowing users to find relevant files or data using metadata based filters, searches, and autocomplete functionalities. Finally, a desktop application designed for local execution may choose to implement the `path` type using a local file browser for files or data stored on the client machine.
 <br><br>
 | Type | Description | Options |
 | ---- | ----------- | ------- |
@@ -183,17 +191,48 @@ The basic UI types define a set of interactive controls that enable users to con
 | color | Color values passed as RGB color values | `fields`: array of preset RGB selections |
 | datetime | Standardized date and time values | `format`: datetime format using [W3C conventions](https://www.w3.org/TR/NOTE-datetime) |
 | path | Absolute or relative path to file/directory using Unix conventions | `ext`: array of allowed file extensions |
-| file | User uploaded binary data | `ext`: array of allowed file extensions <br> `limit`: maximum number of uploaded files <br> `size`: total file size limit
+| file | User uploaded binary data | `ext`: array of allowed file extensions <br> `limit`: maximum number of uploaded files <br> `size`: total file size limit |
 <br>
 
 ## Conditionals
 
-Given the complexity that an IAP with several input and output parameters can introduce, it is useful to have some way to configure logical relationships in the UI flow. The `condition` field in the UI configuration enables the IAP to dictate relationships between input/output parameters and simplify the user experience for consumers of the IAP. Commonly, certain input parameters are only valid given specific configurations of other input parameters. For example, in the IAP defined above the `thresholdvalue` input parameter only applies when a specific `thresholdtype` is selected. 
+Given the complexity that an IAP with several input and output parameters can introduce, it is useful to have some way to configure logical relationships in the UI flow. The `condition` field in the UI configuration enables the IAP to dictate relationships between input/output parameters and simplify the user experience for consumers of the IAP. Commonly, certain input parameters are only valid given specific configurations of other input parameters. For example, in the IAP defined above the `thresholdvalue` input parameter only applies when a specific `thresholdtype` is selected. The `condition` field should be populated by a conditional statement that evaluates to a boolean value. References to other input or output parameters should use the unique `key` for each parameter and one of the following operators:
+<br><br>
+| Operator | Definition |
+| :------: | ---------- |
+| `==` | equal to |
+| `!+` | not equal |
+| `>` | greater than |
+| `<` | less than |
+| `>=` | greater than or equal to |
+| `<=` | less than or equal to |
+| `&&` | and operator to combine two or more conditional expressions |
+| `\|\|` | or operator to combine two or more conditional expressions |
+| `?` | ternary operator for if/then expressions |
+<br>
+
+Like other aspects of the user interface definition, evaluation and usage of the `condition` field is handled individually by applications or platforms that consume IAPs and their workflows. In general, `true` should indicate that the parameter is used, while `false` should indicate that the paramter is not applicable. Multiple conditional expressions can be chained together to define more complex relationships between different parameters. Finally, the ternary operator enables an additional layer of customizability, allowing the IAP to define a default value for a particular paramater, instead of marking it off as not applicable. This can be useful in specific situations where the value of other parameters may restrict the value of a particular parameter that can be left blank.
 
 ## Custom UI Types
 
+Even with the limited scope provided by the basic UI types, different applications that use IAPs may have vastly different implementations to support each type. To provide further extensibility and ease adoption of the IAP, each parameter object has an optional `customType` field. Contrary to the required `type` field, which must be populated from a standardized list of basic UI types, the `customType` field can be any arbitrary string label. Naming conventions and uniqueness are not enforced, but each custom type should be descriptive with the intent to be reusable. Custom types are intended to enhance the user experience when using a specific application, making the parameter easier to interact with or providing application-specific integrations. Each parameter should still be functional using just the basic UI type and custom types should not require any additional configurations options, besides the ones already provided for the basic types. 
 
-
-
+A simple example of a useful custom type is an extension of the `select` type to support image-based selection options, instead of text-based ones. While the basic `select` type is functional and allows the user to select a parameter from an array of string options, adding images to each selection can provide the user with visual examples.
 
 # Hardware Requirements
+
+Hardware requirements are an optional component of the IAP specification that provide increased portability and reproducibility. This section covers three (3) aspects of analysis related hardware: CPU, memory, and GPU. By default, when no hardware requirements section is included, the IAP is assumed to work on any standard x86_64 machine.
+<br><br>
+| Field | Description | Example |
+| ----- | ----------- | ------- |
+| cpu.type | Any non-standard or specific processor limitations. | arm64 |
+| cpu.min | Minimum requirement for CPU allocation where 1 CPU unit is equivalent to 1 physical CPU core or 1 virtual core. | 100m |
+| cpu.recommended | Recommended requirement for CPU allocation for optimal performance. | 200m |
+| memory.min | Minimum requirement for memory allocation, measured in bytes. | 129Mi |
+| memory.recommended | Recommended requirement for memory allocation for optimal performance. | 200 Mi |
+| gpu.enabled | Boolean value indicating if the plugin is optimized for GPU. | false |
+| gpu.required | Boolean value indicating if the plugin requires a GPU to run. | false |
+| gpu.type | Any identifying label for GPU hardware specificity. | cuda11 |
+<br>
+
+ Usage and intepretation of the hardware requirements are left to the discretion of each application or platform implementation that consumes IAPs. Hardware `recommended` fields are intended for facility administrators that may want to set strict limits in a distributed or shared environment, while still enabling optimal performance. Hardware `type` fields should be as generic or unrestricting as possible to enable portability. Plugin developers should make an effort to ensure that their code will work in many, if not most, environments. 
