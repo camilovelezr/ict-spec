@@ -1,9 +1,38 @@
 """ICT model."""
-from pydantic import field_validator
+
+from typing import Union
+
+from pydantic import Field
+from typing_extensions import Annotated
 
 from ict.io import IO
 from ict.metadata import Metadata
-from ict.ui import UI, UIBase
+from ict.ui import (
+    UICheckbox,
+    UIColor,
+    UIDatetime,
+    UIFile,
+    UIMultiselect,
+    UINumber,
+    UIPath,
+    UISelect,
+    UIText,
+)
+
+UIItem = Annotated[
+    Union[
+        UIText,
+        UINumber,
+        UICheckbox,
+        UISelect,
+        UIMultiselect,
+        UIColor,
+        UIDatetime,
+        UIPath,
+        UIFile,
+    ],
+    Field(discriminator="type"),
+]
 
 
 class ICT(Metadata):
@@ -11,14 +40,7 @@ class ICT(Metadata):
 
     inputs: list[IO]
     outputs: list[IO]
-    ui: list[UIBase]
-
-    @field_validator("ui", mode="before", check_fields=True)
-    @classmethod
-    def check_model(cls, value):
-        if isinstance(value, dict):
-            return UI(**value)
-        return value
+    ui: list[UIItem]
 
     # TODO validate that I/O matches ui
 
@@ -65,7 +87,7 @@ t = ICT(
                 "key": "inputs.foo",
                 "title": "foo",
                 "description": "bar",
-                "type": "mo",
+                "type": "nothing",
             },
         ],
     }

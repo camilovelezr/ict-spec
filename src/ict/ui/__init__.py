@@ -1,5 +1,25 @@
 """UI objects."""
 
-from .objects import UI, UIBase
+from .objects import (
+    UICheckbox,
+    UIColor,
+    UIDatetime,
+    UIFile,
+    UIMultiselect,
+    UINumber,
+    UIPath,
+    UISelect,
+    UIText,
+)
 
-__all__ = ["UIBase", "UI"]
+__all__ = [
+    "UICheckbox",
+    "UIColor",
+    "UIDatetime",
+    "UIFile",
+    "UIMultiselect",
+    "UINumber",
+    "UIPath",
+    "UISelect",
+    "UIText",
+]
