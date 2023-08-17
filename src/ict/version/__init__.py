@@ -1,4 +1,4 @@
-"""Common objects."""
+"""Version objects."""
 
 from .semver import Version
 

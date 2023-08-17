@@ -1,4 +1,6 @@
+"""UI objects."""
 import enum
+import re
 from typing import Literal, Optional, Union
 
 from pydantic import BaseModel, Field, RootModel, field_validator
@@ -39,6 +41,22 @@ class TypesEnum(str, enum.Enum):
     FILE = "file"
 
 
+class ConditionalStatement(RootModel):
+    """ConditionalStatement object."""
+
+    root: str
+
+    @field_validator("root")
+    @classmethod
+    def check_conditional_statement(cls, value):
+        """Check the conditional statement follows the correct format."""
+        if not bool(re.match(r"^(inputs|outputs)\.\w+(==|!=|<|>|<=|>=|&&)\w+$", value)):
+            raise ValueError(
+                "The conditional statement must be in the format <inputs or outputs>.<parameter name><operator><value>"
+            )
+        return value
+
+
 class UIBase(BaseModel):
     """UI BaseModel."""
 
@@ -46,8 +64,7 @@ class UIBase(BaseModel):
     title: str
     description: str
     customType: Optional[str] = None
-    condition: Optional[str] = None  # TODO make a validator
-    # type: TypesEnum
+    condition: ConditionalStatement = None
 
 
 class UIText(UIBase):
@@ -56,7 +73,7 @@ class UIText(UIBase):
     default: Optional[str] = None
     regex: Optional[str] = None
     toolbar: Optional[bool] = None
-    type: Literal["text"]
+    ui_type: Literal["text"] = Field(..., alias="type")
 
 
 class UINumber(UIBase):
@@ -65,14 +82,14 @@ class UINumber(UIBase):
     default: Optional[Union[int, float]] = None
     integer: Optional[bool] = None
     range: Optional[tuple[Union[int, float], Union[int, float]]] = None
-    type: Literal["number"]
+    ui_type: Literal["number"] = Field(..., alias="type")
 
 
 class UICheckbox(UIBase):
     """UICheckbox object."""
 
     default: Optional[bool] = None
-    type: Literal["checkbox"]
+    ui_type: Literal["checkbox"] = Field(..., alias="type")
 
 
 class UISelect(UIBase):
@@ -80,7 +97,7 @@ class UISelect(UIBase):
 
     fields: list[str]
     optional: Optional[bool] = None
-    type: Literal["select"]
+    ui_type: Literal["select"] = Field(..., alias="type")
 
 
 class UIMultiselect(UIBase):
@@ -89,14 +106,14 @@ class UIMultiselect(UIBase):
     fields: list[str]
     optional: Optional[bool] = None
     limit: Optional[int] = None
-    type: Literal["multiselect"]
+    ui_type: Literal["multiselect"] = Field(..., alias="type")
 
 
 class UIColor(UIBase):
     """UIColor object in RGB."""
 
     fields: list[int]
-    type: Literal["color"]
+    ui_type: Literal["color"] = Field(..., alias="type")
 
 
 class W3Format(str, enum.Enum):
@@ -114,14 +131,14 @@ class UIDatetime(UIBase):
     """UIDatetime object."""
 
     format: W3Format
-    type: Literal["datetime"]
+    ui_type: Literal["datetime"] = Field(..., alias="type")
 
 
 class UIPath(UIBase):
     """UIPath object absolute or relative using Unix conventions."""
 
     ext: Optional[list[str]] = None
-    type: Literal["path"]
+    ui_type: Literal["path"] = Field(..., alias="type")
 
 
 class UIFile(UIBase):
@@ -130,4 +147,4 @@ class UIFile(UIBase):
     ext: Optional[list[str]] = None
     limit: Optional[int] = None
     size: Optional[int] = None
-    type: Literal["file"]
+    ui_type: Literal["file"] = Field(..., alias="type")

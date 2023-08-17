@@ -1,8 +1,8 @@
 """ICT model."""
 
-from typing import Union
+from typing import Optional, Union
 
-from pydantic import Field
+from pydantic import BaseModel, Field, FieldValidationInfo, field_validator
 from typing_extensions import Annotated
 
 from ict.io import IO
@@ -35,61 +35,34 @@ UIItem = Annotated[
 ]
 
 
+class HardwareRequirements(BaseModel):
+    """HardwareRequirements object."""
+
+    cpu_type: str = Field(..., alias="cpu.type")
+    cpu_min: str = Field(..., alias="cpu.min")
+    cpu_recommended: str = Field(..., alias="cpu.recommended")
+    memory_min: str = Field(..., alias="memory.min")
+    memory_recommended: str = Field(..., alias="memory.recommended")
+    gpu_enabled: bool = Field(..., alias="gpu.enabled")
+    gpu_required: bool = Field(..., alias="gpu.required")
+    gpu_type: str = Field(..., alias="gpu.type")
+
+
 class ICT(Metadata):
     """ICT object."""
 
     inputs: list[IO]
     outputs: list[IO]
     ui: list[UIItem]
+    hardware_requirements: Optional[HardwareRequirements] = None
 
-    # TODO validate that I/O matches ui
-
-
-t = ICT(
-    **{
-        "specVersion": "0.1.2",
-        "name": "test/t2",
-        "version": "0.1.0",
-        "entrypoint": "test.py",
-        "title": "Test Title",
-        "description": "Test Description",
-        "author": ["John Doe", "Jane Doe"],
-        "contact": "c@u.edu",
-        "repository": "https://github.com/ict",
-        "citation": "10.5281/zenodo.1234",
-        "inputs": [
-            {
-                "name": "foo",
-                "type": "text",
-                "description": "bar",
-                "required": True,
-                "format": "es",
-            }
-        ],
-        "outputs": [
-            {
-                "name": "cgfd",
-                "type": "text",
-                "description": "bar",
-                "required": "no",
-                "format": "es",
-            }
-        ],
-        "ui": [
-            {
-                "key": "inputs.foo",
-                "title": "foo",
-                "description": "bar",
-                "type": "number",
-                "toolbar": True,
-            },
-            {
-                "key": "inputs.foo",
-                "title": "foo",
-                "description": "bar",
-                "type": "nothing",
-            },
-        ],
-    }
-)
-2
+    @field_validator("ui")
+    @classmethod
+    def validate_ui(cls, value, info: FieldValidationInfo):
+        """Validate that the ui matches the inputs and outputs."""
+        ui_keys = [ui.key.root.split(".")[-1] for ui in value]
+        io_keys = [io.name for io in info.data["inputs"]]
+        io_keys.extend([io.name for io in info.data["outputs"]])
+        if not set(ui_keys) == set(io_keys):
+            raise ValueError("The ui keys must match the inputs and outputs keys.")
+        return value

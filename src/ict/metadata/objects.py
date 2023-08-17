@@ -1,4 +1,5 @@
-"""Metadata Models"""
+"""Metadata Model."""
+import re
 from pathlib import Path
 from typing import Optional, Union
 
@@ -11,9 +12,7 @@ from pydantic import (
     model_validator,
 )
 
-from ict.common import Version
-
-v = Version("2.0.1")
+from ict.version import Version
 
 
 class Author(RootModel):
@@ -21,7 +20,6 @@ class Author(RootModel):
 
     root: str
 
-    # TODO maybe too specific
     @field_validator("root")
     @classmethod
     def check_author(cls, value):
@@ -37,10 +35,24 @@ class Author(RootModel):
         return self.root
 
 
-class Doi(RootModel):
+class DOI(RootModel):
     """DOI object."""
 
     root: str
+
+    @field_validator("root")
+    @classmethod
+    def check_doi(cls, value):
+        """Check the doi follows the correct format."""
+        if not value.startswith("10."):
+            raise ValueError("The DOI must start with 10.")
+        if not len(value.split("/")) == 2:
+            raise ValueError("The DOI must be in the format <prefix>/<suffix>")
+        return value
+
+    def __repr__(self):
+        """Repr."""
+        return self.root
 
 
 class Metadata(BaseModel):
@@ -49,14 +61,14 @@ class Metadata(BaseModel):
     specVersion: Version
     name: str
     version: Version
-    container: str = "dockerhub"
+    container: str
     entrypoint: Union[Path, str]
     title: Optional[str] = None
     description: Optional[str] = None
     author: list[Author]
     contact: Optional[Union[EmailStr, AnyHttpUrl]]
     repository: AnyHttpUrl
-    citation: Optional[Doi]
+    citation: Optional[DOI]
 
     @field_validator("name")
     @classmethod
@@ -72,7 +84,7 @@ class Metadata(BaseModel):
     @classmethod
     def check_container(cls, value):
         """Check the container follows the correct format."""
-        if not len(value.split("/")) in [2, 3]:
+        if not bool(re.match(r"^[a-zA-Z]*\/{0,1}[a-zA-Z_\-]+:[a-zA-Z0-9_\.]+$", value)):
             raise ValueError(
                 "The name must be in the format <registry path>/<image repository>:<tag>"
             )
@@ -84,18 +96,3 @@ class Metadata(BaseModel):
         if self.title is None:
             self.title = self.name
         return self
-
-
-d = {
-    "specVersion": "0.1.2",
-    "name": "test/t2",
-    "version": "0.1.0",
-    "entrypoint": "test.py",
-    "title": "Test Title",
-    "description": "Test Description",
-    "author": ["John Doe", "Jane Doe"],
-    "contact": "c@u.edu",
-    "repository": "https://github.com/ict",
-    "citation": "10.5281/zenodo.1234",
-}
-t = Metadata(**d)

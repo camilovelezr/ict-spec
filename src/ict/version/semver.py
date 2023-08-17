@@ -22,10 +22,6 @@ class Version(RootModel):
 
     root: str
 
-    # def __init__(self, version: str) -> None:
-    #     """Initialize Version object."""
-    #     super().__init__(version=version)
-
     @field_validator("root")
     @classmethod
     def semantic_version(
