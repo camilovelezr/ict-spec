@@ -56,6 +56,10 @@ class ConditionalStatement(RootModel):
             )
         return value
 
+    def __repr__(self):
+        """Repr."""
+        return self.root
+
 
 class UIBase(BaseModel):
     """UI BaseModel."""
