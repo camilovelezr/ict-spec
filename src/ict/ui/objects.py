@@ -15,16 +15,20 @@ class UIKey(RootModel):
     @classmethod
     def check_ui_key(cls, value):
         """Check the UI key follows the correct format."""
-        sp = value.split(".")  # ruff: noqa: PLR2004
-        if not len(sp) == 2:
+        sp_ = value.split(".")  # ruff: noqa: PLR2004
+        if not len(sp_) == 2:
             raise ValueError(
                 "The UI key must be in the format <inputs or outputs>.<parameter name>"
             )
-        if not sp[0] in ["inputs", "outputs"]:
+        if not sp_[0] in ["inputs", "outputs"]:
             raise ValueError(
                 "The UI key must be in the format <inputs or outputs>.<parameter name>"
             )
         return value
+
+    def __repr__(self):
+        """Repr."""
+        return f"'{self.root}'"
 
 
 class TypesEnum(str, enum.Enum):
@@ -58,7 +62,7 @@ class ConditionalStatement(RootModel):
 
     def __repr__(self):
         """Repr."""
-        return self.root
+        return f"'{self.root}'"
 
 
 class UIBase(BaseModel):
