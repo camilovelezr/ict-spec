@@ -2,9 +2,10 @@
 
 from typing import Optional, Union
 
-from pydantic import BaseModel, Field, FieldValidationInfo, field_validator
+from pydantic import Field, FieldValidationInfo, field_validator
 from typing_extensions import Annotated
 
+from ict.hardware import HardwareRequirements
 from ict.io import IO
 from ict.metadata import Metadata
 from ict.ui import (
@@ -35,26 +36,13 @@ UIItem = Annotated[
 ]
 
 
-class HardwareRequirements(BaseModel):
-    """HardwareRequirements object."""
-
-    cpu_type: str = Field(..., alias="cpu.type")
-    cpu_min: str = Field(..., alias="cpu.min")
-    cpu_recommended: str = Field(..., alias="cpu.recommended")
-    memory_min: str = Field(..., alias="memory.min")
-    memory_recommended: str = Field(..., alias="memory.recommended")
-    gpu_enabled: bool = Field(..., alias="gpu.enabled")
-    gpu_required: bool = Field(..., alias="gpu.required")
-    gpu_type: str = Field(..., alias="gpu.type")
-
-
 class ICT(Metadata):
     """ICT object."""
 
     inputs: list[IO]
     outputs: list[IO]
     ui: list[UIItem]
-    hardware_requirements: Optional[HardwareRequirements] = None
+    hardware: Optional[HardwareRequirements] = None
 
     @field_validator("ui")
     @classmethod
