@@ -67,7 +67,7 @@ class UIBase(BaseModel):
     condition: ConditionalStatement = None
 
 
-class UIText(UIBase):
+class UIText(UIBase, extra="forbid"):
     """UIText object."""
 
     default: Optional[str] = None
@@ -76,23 +76,25 @@ class UIText(UIBase):
     ui_type: Literal["text"] = Field(..., alias="type")
 
 
-class UINumber(UIBase):
+class UINumber(UIBase, extra="forbid"):
     """UINumber object."""
 
     default: Optional[Union[int, float]] = None
     integer: Optional[bool] = None
-    range: Optional[tuple[Union[int, float], Union[int, float]]] = None
+    number_range: Optional[tuple[Union[int, float], Union[int, float]]] = Field(
+        None, alias="range"
+    )
     ui_type: Literal["number"] = Field(..., alias="type")
 
 
-class UICheckbox(UIBase):
+class UICheckbox(UIBase, extra="forbid"):
     """UICheckbox object."""
 
     default: Optional[bool] = None
     ui_type: Literal["checkbox"] = Field(..., alias="type")
 
 
-class UISelect(UIBase):
+class UISelect(UIBase, extra="forbid"):
     """UISelect object."""
 
     fields: list[str]
@@ -100,7 +102,7 @@ class UISelect(UIBase):
     ui_type: Literal["select"] = Field(..., alias="type")
 
 
-class UIMultiselect(UIBase):
+class UIMultiselect(UIBase, extra="forbid"):
     """UIMultiselect object."""
 
     fields: list[str]
@@ -109,7 +111,7 @@ class UIMultiselect(UIBase):
     ui_type: Literal["multiselect"] = Field(..., alias="type")
 
 
-class UIColor(UIBase):
+class UIColor(UIBase, extra="forbid"):
     """UIColor object in RGB."""
 
     fields: list[int]
@@ -127,21 +129,21 @@ class W3Format(str, enum.Enum):
     COMPLETE_DATE_TIME_MS = "YYYY-MM-DDThh:mm:ss.sTZD"
 
 
-class UIDatetime(UIBase):
+class UIDatetime(UIBase, extra="forbid"):
     """UIDatetime object."""
 
     format: W3Format
     ui_type: Literal["datetime"] = Field(..., alias="type")
 
 
-class UIPath(UIBase):
+class UIPath(UIBase, extra="forbid"):
     """UIPath object absolute or relative using Unix conventions."""
 
     ext: Optional[list[str]] = None
     ui_type: Literal["path"] = Field(..., alias="type")
 
 
-class UIFile(UIBase):
+class UIFile(UIBase, extra="forbid"):
     """UIFile user uploaded binary data object."""
 
     ext: Optional[list[str]] = None

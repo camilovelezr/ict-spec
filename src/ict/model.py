@@ -31,7 +31,7 @@ UIItem = Annotated[
         UIPath,
         UIFile,
     ],
-    Field(discriminator="type"),
+    Field(discriminator="ui_type"),
 ]
 
 
