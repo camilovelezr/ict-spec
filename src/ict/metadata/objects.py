@@ -7,10 +7,13 @@ from pydantic import (
     AnyHttpUrl,
     BaseModel,
     EmailStr,
+    Field,
     RootModel,
+    WithJsonSchema,
     field_validator,
     model_validator,
 )
+from typing_extensions import Annotated
 
 from ict.version import Version
 
@@ -55,20 +58,59 @@ class DOI(RootModel):
         return self.root
 
 
+EntrypointPath = Annotated[Path, WithJsonSchema({"type": "string", "format": "uri"})]
+
+
 class Metadata(BaseModel):
     """Metadata BaseModel."""
 
-    specVersion: Version
-    name: str
-    version: Version
-    container: str
-    entrypoint: Union[Path, str]
-    title: Optional[str] = None
-    description: Optional[str] = None
-    author: list[Author]
-    contact: Optional[Union[EmailStr, AnyHttpUrl]]
-    repository: AnyHttpUrl
-    citation: Optional[DOI]
+    specVersion: Version = Field(
+        description="Version of ICT specification yaml schema.", examples=["0.1.0"]
+    )
+    name: str = Field(
+        description="Unique identifier for ICT tool scoped on organization or user, should take the format <organization/user>/<ICT name>.",
+        examples=["wipp/threshold"],
+    )
+    version: Version = Field(
+        description="Version of ICT, semantic versioning is recommended.",
+        examples=["1.1.1"],
+    )
+    container: str = Field(
+        description="Direct link to hosted ICT container image, should take the format <registry path>/<image repository>:<tag>, registry path may be omitted and will default to Docker Hub.",
+        examples=["wipp/threshold:1.1.1"],
+    )
+    entrypoint: Union[EntrypointPath, str] = Field(
+        description="Absolute path to initial script or command within packaged image."
+    )
+    title: Optional[str] = Field(
+        None,
+        description="(optional) Descriptive human-readable name, will default to `name` if omitted.",
+        examples=["Thresholding Plugin"],
+    )
+    description: Optional[str] = Field(
+        None,
+        description="(optional) Brief description of plugin.",
+        examples=["Thresholding methods from ImageJ"],
+    )
+    author: list[Author] = Field(
+        description="Comma separated list of authors, each author name should take the format <first name> <last name>.",
+        examples=["Mohammed Ouladi"],
+    )
+    contact: Optional[Union[EmailStr, AnyHttpUrl]] = Field(
+        description="Email or link to point of contact (ie. GitHub user page) for questions or issues.",
+        examples=["mohammed.ouladi@labshare.org"],
+    )
+    repository: AnyHttpUrl = Field(
+        description="Url for public or private repository hosting source code.",
+        examples=["https://github.com/polusai/polus-plugins"],
+    )
+    documentation: Optional[AnyHttpUrl] = Field(
+        None,
+        description="Url for hosted documentation about using or modifying the plugin.",
+    )
+    citation: Optional[DOI] = Field(
+        description="DOI link to relevant citation, plugin user should use this citation when using this plugin."
+    )
 
     @field_validator("name")
     @classmethod

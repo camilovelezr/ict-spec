@@ -1,5 +1,6 @@
 # pylint: disable=E0213
 """SemVer object."""
+# TODO make this better in JSON schema
 import re
 from functools import singledispatchmethod
 from typing import Any, Union

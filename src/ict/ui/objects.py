@@ -72,7 +72,10 @@ class UIBase(BaseModel):
     title: str
     description: str
     customType: Optional[str] = None
-    condition: ConditionalStatement = None
+    condition: ConditionalStatement = Field(
+        None,
+        json_schema_extra={"pattern": "^(inputs|outputs)\.\w+(==|!=|<|>|<=|>=|&&)\w+$"},
+    )
 
 
 class UIText(UIBase, extra="forbid"):
