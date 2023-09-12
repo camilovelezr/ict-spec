@@ -1,7 +1,8 @@
 """Metadata Model."""
 import re
+from functools import singledispatchmethod
 from pathlib import Path
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from pydantic import (
     AnyHttpUrl,
@@ -37,6 +38,26 @@ class Author(RootModel):
         """Repr."""
         return self.root
 
+    def __str__(self):
+        """Str."""
+        return self.root
+
+    @singledispatchmethod
+    def __eq__(self, other: Any) -> bool:
+        """Compare if two Author objects are equal."""
+        msg = "invalid type for comparison."
+        raise TypeError(msg)
+
+
+@Author.__eq__.register(str)  # pylint: disable=no-member
+def _(self, other):
+    return self.root == other
+
+
+@Author.__eq__.register(Author)  # pylint: disable=no-member
+def _(self, other):
+    return self.root == other.root
+
 
 class DOI(RootModel):
     """DOI object."""
@@ -56,6 +77,26 @@ class DOI(RootModel):
     def __repr__(self):
         """Repr."""
         return self.root
+
+    def __str__(self):
+        """Str."""
+        return self.root
+
+    @singledispatchmethod
+    def __eq__(self, other: Any) -> bool:
+        """Compare if two DOI objects are equal."""
+        msg = "invalid type for comparison."
+        raise TypeError(msg)
+
+
+@DOI.__eq__.register(str)  # pylint: disable=no-member
+def _(self, other):
+    return self.root == other
+
+
+@DOI.__eq__.register(DOI)  # pylint: disable=no-member
+def _(self, other):
+    return self.root == other.root
 
 
 EntrypointPath = Annotated[Path, WithJsonSchema({"type": "string", "format": "uri"})]
