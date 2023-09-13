@@ -54,7 +54,9 @@ class ConditionalStatement(RootModel):
     @classmethod
     def check_conditional_statement(cls, value):
         """Check the conditional statement follows the correct format."""
-        if not bool(re.match(r"^(inputs|outputs)\.\w+(==|!=|<|>|<=|>=|&&)\w+$", value)):
+        if not bool(
+            re.match(r"^(inputs|outputs)\.\w+(==|!=|<|>|<=|>=|&&)'?\w+'?$", value)
+        ):
             raise ValueError(
                 "The conditional statement must be in the format <inputs or outputs>.<parameter name><operator><value>"
             )
