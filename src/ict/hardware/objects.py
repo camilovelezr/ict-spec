@@ -24,40 +24,35 @@ class CPU(BaseModel):
         alias="type",
         description="Any non-standard or specific processor limitations.",
         examples=["arm64"],
-        strict=False,
     )
     cpu_min: Optional[StrInt] = Field(
         None,
         alias="min",
         description="Minimum requirement for CPU allocation where 1 CPU unit is equivalent to 1 physical CPU core or 1 virtual core.",
         examples=["100m"],
-        # strict=False,
     )
-    recommended: Optional[str] = Field(
+    recommended: Optional[StrInt] = Field(
         None,
         alias="recommended",
         description="Recommended requirement for CPU allocation for optimal performance.",
         examples=["200m"],
-        strict=False,
     )
 
 
 class Memory(BaseModel):
     """Memory object."""
 
-    memory_min: Optional[str] = Field(
+    memory_min: Optional[StrInt] = Field(
         None,
         alias="min",
         description="Minimum requirement for memory allocation, measured in bytes.",
         examples=["129Mi"],
-        strict=False,
     )
-    memory_recommended: Optional[str] = Field(
+    memory_recommended: Optional[StrInt] = Field(
         None,
         alias="recommended",
         description="Recommended requirement for memory allocation for optimal performance.",
         examples=["200Mi"],
-        strict=False,
     )
 
 
@@ -69,21 +64,18 @@ class GPU(BaseModel):
         alias="enabled",
         description="Boolean value indicating if the plugin is optimized for GPU.",
         examples=[False],
-        strict=False,
     )
     gpu_required: Optional[bool] = Field(
         None,
         alias="required",
         description="Boolean value indicating if the plugin requires a GPU to run.",
         examples=[False],
-        strict=False,
     )
     gpu_type: Optional[str] = Field(
         None,
         alias="type",
         description="	Any identifying label for GPU hardware specificity.",
         examples=["cuda11"],
-        strict=False,
     )
 
 
