@@ -1,3 +1,4 @@
+import json
 from functools import singledispatch
 from pathlib import Path
 from typing import TypeVar
@@ -10,11 +11,18 @@ StrPath = TypeVar("StrPath", str, Path)
 
 
 @singledispatch
-def validate(yaml_file: StrPath) -> ICT:
+def validate(file: StrPath) -> ICT:
     """Validate an ICT specification."""
-    with open(yaml_file, "r", encoding="utf-8") as file:
-        data = safe_load(file)
-    return ICT(**data)
+    if str(file).endswith(".yaml"):
+        with open(file, "r", encoding="utf-8") as f_o:
+            data = safe_load(f_o)
+    elif str(file).endswith(".json"):
+        with open(file, "r", encoding="utf-8") as f_o:
+            data = json.load(f_o)
+    else:
+        raise ValueError(f"File extension not supported: {file}")
+    print(data)
+    return validate(data)
 
 
 @validate.register
