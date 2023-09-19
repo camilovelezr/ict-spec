@@ -1,6 +1,6 @@
 """IO objects for ICT."""
 import enum
-from typing import Union
+from typing import Optional, Union
 
 from pydantic import BaseModel, Field
 
@@ -28,7 +28,8 @@ class IO(BaseModel):
         description="Defines the parameter passed to the ICT tool based on broad categories of basic types.",
         examples=["string"],
     )
-    description: str = Field(
+    description: Optional[str] = Field(
+        None,
         description="Short text description of expected value for field.",
         examples=["Algorithm type for thresholding"],
     )
@@ -40,6 +41,6 @@ class IO(BaseModel):
     io_format: Union[list[str], dict] = Field(
         ...,
         alias="format",
-        description="Defines the actual value(s) that the input/output parameter "
+        description="Defines the actual value(s) that the input/output parameter represents"
         + "represents using an ontology schema.",
     )  # TODO ontology

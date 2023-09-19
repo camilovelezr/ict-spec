@@ -79,7 +79,8 @@ class UIBase(BaseModel):
         description="User friendly label used in UI.",
         examples=["Thresholding Value"],
     )
-    description: str = Field(
+    description: Optional[str] = Field(
+        None,
         description="Short user friendly instructions for selecting appropriate parameter.",
         examples=["Enter a threshold value"],
     )

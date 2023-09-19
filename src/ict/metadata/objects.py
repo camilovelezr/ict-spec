@@ -137,7 +137,7 @@ class Metadata(BaseModel):
         description="Comma separated list of authors, each author name should take the format <first name> <last name>.",
         examples=["Mohammed Ouladi"],
     )
-    contact: Optional[Union[EmailStr, AnyHttpUrl]] = Field(
+    contact: Union[EmailStr, AnyHttpUrl] = Field(
         description="Email or link to point of contact (ie. GitHub user page) for questions or issues.",
         examples=["mohammed.ouladi@labshare.org"],
     )
@@ -150,7 +150,8 @@ class Metadata(BaseModel):
         description="Url for hosted documentation about using or modifying the plugin.",
     )
     citation: Optional[DOI] = Field(
-        description="DOI link to relevant citation, plugin user should use this citation when using this plugin."
+        None,
+        description="DOI link to relevant citation, plugin user should use this citation when using this plugin.",
     )
 
     @field_validator("name")
