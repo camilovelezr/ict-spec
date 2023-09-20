@@ -1,0 +1,1520 @@
+{
+  "$defs": {
+    "Author": {
+      "description": "Author object.",
+      "title": "Author",
+      "type": "string"
+    },
+    "CPU": {
+      "description": "CPU object.",
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Any non-standard or specific processor limitations.",
+          "examples": [
+            "arm64"
+          ],
+          "title": "Type"
+        },
+        "min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum requirement for CPU allocation where 1 CPU unit is equivalent to 1 physical CPU core or 1 virtual core.",
+          "examples": [
+            "100m"
+          ],
+          "title": "Min"
+        },
+        "recommended": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Recommended requirement for CPU allocation for optimal performance.",
+          "examples": [
+            "200m"
+          ],
+          "title": "Recommended"
+        }
+      },
+      "title": "CPU",
+      "type": "object"
+    },
+    "ConditionalStatement": {
+      "description": "ConditionalStatement object.",
+      "title": "ConditionalStatement",
+      "type": "string"
+    },
+    "DOI": {
+      "description": "DOI object.",
+      "title": "DOI",
+      "type": "string"
+    },
+    "GPU": {
+      "description": "GPU object.",
+      "properties": {
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Boolean value indicating if the plugin is optimized for GPU.",
+          "examples": [
+            false
+          ],
+          "title": "Enabled"
+        },
+        "required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Boolean value indicating if the plugin requires a GPU to run.",
+          "examples": [
+            false
+          ],
+          "title": "Required"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "\tAny identifying label for GPU hardware specificity.",
+          "examples": [
+            "cuda11"
+          ],
+          "title": "Type"
+        }
+      },
+      "title": "GPU",
+      "type": "object"
+    },
+    "HardwareRequirements": {
+      "description": "HardwareRequirements object.",
+      "properties": {
+        "cpu": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CPU"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CPU requirements."
+        },
+        "memory": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Memory"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Memory requirements."
+        },
+        "gpu": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GPU"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GPU requirements."
+        }
+      },
+      "title": "HardwareRequirements",
+      "type": "object"
+    },
+    "IO": {
+      "description": "IO BaseModel.",
+      "properties": {
+        "name": {
+          "description": "Unique input or output name for this plugin, case-sensitive match to corresponding variable expected by tool.",
+          "examples": [
+            "thresholdtype"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/TypesEnum"
+            }
+          ],
+          "description": "Defines the parameter passed to the ICT tool based on broad categories of basic types.",
+          "examples": [
+            "string"
+          ]
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Short text description of expected value for field.",
+          "examples": [
+            "Algorithm type for thresholding"
+          ],
+          "title": "Description"
+        },
+        "required": {
+          "description": "Boolean (true/false) value indicating whether this field needs an associated value.",
+          "examples": [
+            "true"
+          ],
+          "title": "Required",
+          "type": "boolean"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "object"
+            }
+          ],
+          "description": "Defines the actual value(s) that the input/output parameter representsrepresents using an ontology schema.",
+          "title": "Format"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "required",
+        "format"
+      ],
+      "title": "IO",
+      "type": "object"
+    },
+    "Memory": {
+      "description": "Memory object.",
+      "properties": {
+        "min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum requirement for memory allocation, measured in bytes.",
+          "examples": [
+            "129Mi"
+          ],
+          "title": "Min"
+        },
+        "recommended": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Recommended requirement for memory allocation for optimal performance.",
+          "examples": [
+            "200Mi"
+          ],
+          "title": "Recommended"
+        }
+      },
+      "title": "Memory",
+      "type": "object"
+    },
+    "TypesEnum": {
+      "description": "Types enum for IO.",
+      "enum": [
+        "string",
+        "number",
+        "array",
+        "boolean",
+        "path"
+      ],
+      "title": "TypesEnum",
+      "type": "string"
+    },
+    "UICheckbox": {
+      "additionalProperties": false,
+      "description": "Boolean operator, checked for `true` unchecked for `false`.",
+      "properties": {
+        "key": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/UIKey"
+            }
+          ],
+          "description": "Identifier to connect UI configuration to specific parameter, should take the form <inputs or outputs>.<parameter name>.",
+          "examples": [
+            "inputs.thresholdvalue"
+          ]
+        },
+        "title": {
+          "description": "User friendly label used in UI.",
+          "examples": [
+            "Thresholding Value"
+          ],
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Short user friendly instructions for selecting appropriate parameter.",
+          "examples": [
+            "Enter a threshold value"
+          ],
+          "title": "Description"
+        },
+        "customType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label for a non-standard expected user interface.",
+          "title": "Customtype"
+        },
+        "condition": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ConditionalStatement"
+            }
+          ],
+          "default": null,
+          "description": "Conditional statement that resolves to a boolean value based on UI configuration and selected value, used to dictate relationship between parameters.",
+          "examples": [
+            "inputs.thresholdtype=='Manual'"
+          ],
+          "pattern": "^(inputs|outputs)\\.\\w+(==|!=|<|>|<=|>=|&&)\\w+$"
+        },
+        "default": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prefilled value, either `true` or `false`.",
+          "title": "Default"
+        },
+        "type": {
+          "const": "checkbox",
+          "description": "Defines the expected user interface based on a set of basic UI types.",
+          "title": "Type"
+        }
+      },
+      "required": [
+        "key",
+        "title",
+        "type"
+      ],
+      "title": "UICheckbox",
+      "type": "object"
+    },
+    "UIColor": {
+      "additionalProperties": false,
+      "description": "Color values passed as RGB color values.",
+      "properties": {
+        "key": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/UIKey"
+            }
+          ],
+          "description": "Identifier to connect UI configuration to specific parameter, should take the form <inputs or outputs>.<parameter name>.",
+          "examples": [
+            "inputs.thresholdvalue"
+          ]
+        },
+        "title": {
+          "description": "User friendly label used in UI.",
+          "examples": [
+            "Thresholding Value"
+          ],
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Short user friendly instructions for selecting appropriate parameter.",
+          "examples": [
+            "Enter a threshold value"
+          ],
+          "title": "Description"
+        },
+        "customType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label for a non-standard expected user interface.",
+          "title": "Customtype"
+        },
+        "condition": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ConditionalStatement"
+            }
+          ],
+          "default": null,
+          "description": "Conditional statement that resolves to a boolean value based on UI configuration and selected value, used to dictate relationship between parameters.",
+          "examples": [
+            "inputs.thresholdtype=='Manual'"
+          ],
+          "pattern": "^(inputs|outputs)\\.\\w+(==|!=|<|>|<=|>=|&&)\\w+$"
+        },
+        "fields": {
+          "description": "Array of preset RGB selections.",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "type": {
+          "const": "color",
+          "description": "Defines the expected user interface based on a set of basic UI types.",
+          "title": "Type"
+        }
+      },
+      "required": [
+        "key",
+        "title",
+        "fields",
+        "type"
+      ],
+      "title": "UIColor",
+      "type": "object"
+    },
+    "UIDatetime": {
+      "additionalProperties": false,
+      "description": "Standardized date and time values.",
+      "properties": {
+        "key": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/UIKey"
+            }
+          ],
+          "description": "Identifier to connect UI configuration to specific parameter, should take the form <inputs or outputs>.<parameter name>.",
+          "examples": [
+            "inputs.thresholdvalue"
+          ]
+        },
+        "title": {
+          "description": "User friendly label used in UI.",
+          "examples": [
+            "Thresholding Value"
+          ],
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Short user friendly instructions for selecting appropriate parameter.",
+          "examples": [
+            "Enter a threshold value"
+          ],
+          "title": "Description"
+        },
+        "customType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label for a non-standard expected user interface.",
+          "title": "Customtype"
+        },
+        "condition": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ConditionalStatement"
+            }
+          ],
+          "default": null,
+          "description": "Conditional statement that resolves to a boolean value based on UI configuration and selected value, used to dictate relationship between parameters.",
+          "examples": [
+            "inputs.thresholdtype=='Manual'"
+          ],
+          "pattern": "^(inputs|outputs)\\.\\w+(==|!=|<|>|<=|>=|&&)\\w+$"
+        },
+        "format": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/W3Format"
+            }
+          ],
+          "description": "Datetime format using W3C conventions."
+        },
+        "type": {
+          "const": "datetime",
+          "description": "Defines the expected user interface based on a set of basic UI types.",
+          "title": "Type"
+        }
+      },
+      "required": [
+        "key",
+        "title",
+        "format",
+        "type"
+      ],
+      "title": "UIDatetime",
+      "type": "object"
+    },
+    "UIFile": {
+      "additionalProperties": false,
+      "description": "User uploaded binary data.",
+      "properties": {
+        "key": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/UIKey"
+            }
+          ],
+          "description": "Identifier to connect UI configuration to specific parameter, should take the form <inputs or outputs>.<parameter name>.",
+          "examples": [
+            "inputs.thresholdvalue"
+          ]
+        },
+        "title": {
+          "description": "User friendly label used in UI.",
+          "examples": [
+            "Thresholding Value"
+          ],
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Short user friendly instructions for selecting appropriate parameter.",
+          "examples": [
+            "Enter a threshold value"
+          ],
+          "title": "Description"
+        },
+        "customType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label for a non-standard expected user interface.",
+          "title": "Customtype"
+        },
+        "condition": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ConditionalStatement"
+            }
+          ],
+          "default": null,
+          "description": "Conditional statement that resolves to a boolean value based on UI configuration and selected value, used to dictate relationship between parameters.",
+          "examples": [
+            "inputs.thresholdtype=='Manual'"
+          ],
+          "pattern": "^(inputs|outputs)\\.\\w+(==|!=|<|>|<=|>=|&&)\\w+$"
+        },
+        "ext": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of allowed file extensions.",
+          "title": "Ext"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of uploaded files.",
+          "title": "Limit"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total size file limit.",
+          "title": "Size"
+        },
+        "type": {
+          "const": "file",
+          "description": "Defines the expected user interface based on a set of basic UI types.",
+          "title": "Type"
+        }
+      },
+      "required": [
+        "key",
+        "title",
+        "type"
+      ],
+      "title": "UIFile",
+      "type": "object"
+    },
+    "UIKey": {
+      "description": "UIKey object.",
+      "title": "UIKey",
+      "type": "string"
+    },
+    "UIMultiselect": {
+      "additionalProperties": false,
+      "description": "One or more string values from a set of options.",
+      "properties": {
+        "key": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/UIKey"
+            }
+          ],
+          "description": "Identifier to connect UI configuration to specific parameter, should take the form <inputs or outputs>.<parameter name>.",
+          "examples": [
+            "inputs.thresholdvalue"
+          ]
+        },
+        "title": {
+          "description": "User friendly label used in UI.",
+          "examples": [
+            "Thresholding Value"
+          ],
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Short user friendly instructions for selecting appropriate parameter.",
+          "examples": [
+            "Enter a threshold value"
+          ],
+          "title": "Description"
+        },
+        "customType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label for a non-standard expected user interface.",
+          "title": "Customtype"
+        },
+        "condition": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ConditionalStatement"
+            }
+          ],
+          "default": null,
+          "description": "Conditional statement that resolves to a boolean value based on UI configuration and selected value, used to dictate relationship between parameters.",
+          "examples": [
+            "inputs.thresholdtype=='Manual'"
+          ],
+          "pattern": "^(inputs|outputs)\\.\\w+(==|!=|<|>|<=|>=|&&)\\w+$"
+        },
+        "fields": {
+          "description": "Required array of options.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "optional": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank by default.",
+          "title": "Optional"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of selections.",
+          "title": "Limit"
+        },
+        "type": {
+          "const": "multiselect",
+          "description": "Defines the expected user interface based on a set of basic UI types.",
+          "title": "Type"
+        }
+      },
+      "required": [
+        "key",
+        "title",
+        "fields",
+        "type"
+      ],
+      "title": "UIMultiselect",
+      "type": "object"
+    },
+    "UINumber": {
+      "additionalProperties": false,
+      "description": "Any numerical value.",
+      "properties": {
+        "key": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/UIKey"
+            }
+          ],
+          "description": "Identifier to connect UI configuration to specific parameter, should take the form <inputs or outputs>.<parameter name>.",
+          "examples": [
+            "inputs.thresholdvalue"
+          ]
+        },
+        "title": {
+          "description": "User friendly label used in UI.",
+          "examples": [
+            "Thresholding Value"
+          ],
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Short user friendly instructions for selecting appropriate parameter.",
+          "examples": [
+            "Enter a threshold value"
+          ],
+          "title": "Description"
+        },
+        "customType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label for a non-standard expected user interface.",
+          "title": "Customtype"
+        },
+        "condition": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ConditionalStatement"
+            }
+          ],
+          "default": null,
+          "description": "Conditional statement that resolves to a boolean value based on UI configuration and selected value, used to dictate relationship between parameters.",
+          "examples": [
+            "inputs.thresholdtype=='Manual'"
+          ],
+          "pattern": "^(inputs|outputs)\\.\\w+(==|!=|<|>|<=|>=|&&)\\w+$"
+        },
+        "default": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prefilled value.",
+          "title": "Default"
+        },
+        "integer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Boolean value to force integers only.",
+          "title": "Integer"
+        },
+        "range": {
+          "anyOf": [
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum and maximum range as a tuple.",
+          "title": "Range"
+        },
+        "type": {
+          "const": "number",
+          "description": "Defines the expected user interface based on a set of basic UI types.",
+          "title": "Type"
+        }
+      },
+      "required": [
+        "key",
+        "title",
+        "type"
+      ],
+      "title": "UINumber",
+      "type": "object"
+    },
+    "UIPath": {
+      "additionalProperties": false,
+      "description": "Absolute or relative path to file/directory using Unix conventions.",
+      "properties": {
+        "key": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/UIKey"
+            }
+          ],
+          "description": "Identifier to connect UI configuration to specific parameter, should take the form <inputs or outputs>.<parameter name>.",
+          "examples": [
+            "inputs.thresholdvalue"
+          ]
+        },
+        "title": {
+          "description": "User friendly label used in UI.",
+          "examples": [
+            "Thresholding Value"
+          ],
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Short user friendly instructions for selecting appropriate parameter.",
+          "examples": [
+            "Enter a threshold value"
+          ],
+          "title": "Description"
+        },
+        "customType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label for a non-standard expected user interface.",
+          "title": "Customtype"
+        },
+        "condition": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ConditionalStatement"
+            }
+          ],
+          "default": null,
+          "description": "Conditional statement that resolves to a boolean value based on UI configuration and selected value, used to dictate relationship between parameters.",
+          "examples": [
+            "inputs.thresholdtype=='Manual'"
+          ],
+          "pattern": "^(inputs|outputs)\\.\\w+(==|!=|<|>|<=|>=|&&)\\w+$"
+        },
+        "ext": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of allowed file extensions.",
+          "title": "Ext"
+        },
+        "type": {
+          "const": "path",
+          "description": "Defines the expected user interface based on a set of basic UI types.",
+          "title": "Type"
+        }
+      },
+      "required": [
+        "key",
+        "title",
+        "type"
+      ],
+      "title": "UIPath",
+      "type": "object"
+    },
+    "UISelect": {
+      "additionalProperties": false,
+      "description": "Single string value from a set of options.",
+      "properties": {
+        "key": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/UIKey"
+            }
+          ],
+          "description": "Identifier to connect UI configuration to specific parameter, should take the form <inputs or outputs>.<parameter name>.",
+          "examples": [
+            "inputs.thresholdvalue"
+          ]
+        },
+        "title": {
+          "description": "User friendly label used in UI.",
+          "examples": [
+            "Thresholding Value"
+          ],
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Short user friendly instructions for selecting appropriate parameter.",
+          "examples": [
+            "Enter a threshold value"
+          ],
+          "title": "Description"
+        },
+        "customType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label for a non-standard expected user interface.",
+          "title": "Customtype"
+        },
+        "condition": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ConditionalStatement"
+            }
+          ],
+          "default": null,
+          "description": "Conditional statement that resolves to a boolean value based on UI configuration and selected value, used to dictate relationship between parameters.",
+          "examples": [
+            "inputs.thresholdtype=='Manual'"
+          ],
+          "pattern": "^(inputs|outputs)\\.\\w+(==|!=|<|>|<=|>=|&&)\\w+$"
+        },
+        "fields": {
+          "description": "Required array of options.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "optional": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank by default.",
+          "title": "Optional"
+        },
+        "type": {
+          "const": "select",
+          "description": "Defines the expected user interface based on a set of basic UI types.",
+          "title": "Type"
+        }
+      },
+      "required": [
+        "key",
+        "title",
+        "fields",
+        "type"
+      ],
+      "title": "UISelect",
+      "type": "object"
+    },
+    "UIText": {
+      "additionalProperties": false,
+      "description": "Any arbitrary length string.",
+      "properties": {
+        "key": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/UIKey"
+            }
+          ],
+          "description": "Identifier to connect UI configuration to specific parameter, should take the form <inputs or outputs>.<parameter name>.",
+          "examples": [
+            "inputs.thresholdvalue"
+          ]
+        },
+        "title": {
+          "description": "User friendly label used in UI.",
+          "examples": [
+            "Thresholding Value"
+          ],
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Short user friendly instructions for selecting appropriate parameter.",
+          "examples": [
+            "Enter a threshold value"
+          ],
+          "title": "Description"
+        },
+        "customType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label for a non-standard expected user interface.",
+          "title": "Customtype"
+        },
+        "condition": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ConditionalStatement"
+            }
+          ],
+          "default": null,
+          "description": "Conditional statement that resolves to a boolean value based on UI configuration and selected value, used to dictate relationship between parameters.",
+          "examples": [
+            "inputs.thresholdtype=='Manual'"
+          ],
+          "pattern": "^(inputs|outputs)\\.\\w+(==|!=|<|>|<=|>=|&&)\\w+$"
+        },
+        "default": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prefilled value.",
+          "title": "Default"
+        },
+        "regex": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Regular expression for validation.",
+          "title": "Regex"
+        },
+        "toolbar": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Boolean value to add text formatting toolbar.",
+          "title": "Toolbar"
+        },
+        "type": {
+          "const": "text",
+          "description": "Defines the expected user interface based on a set of basic UI types.",
+          "title": "Type"
+        }
+      },
+      "required": [
+        "key",
+        "title",
+        "type"
+      ],
+      "title": "UIText",
+      "type": "object"
+    },
+    "Version": {
+      "description": "SemVer object.",
+      "title": "Version",
+      "type": "string"
+    },
+    "W3Format": {
+      "description": "W3Format enum.",
+      "enum": [
+        "YYYY",
+        "YYYY-MM",
+        "YYYY-MM-DD",
+        "YYYY-MM-DDThh:mmTZD",
+        "YYYY-MM-DDThh:mm:ssTZD",
+        "YYYY-MM-DDThh:mm:ss.sTZD"
+      ],
+      "title": "W3Format",
+      "type": "string"
+    }
+  },
+  "description": "ICT object.",
+  "properties": {
+    "specVersion": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Version"
+        }
+      ],
+      "description": "Version of ICT specification yaml schema.",
+      "examples": [
+        "0.1.0"
+      ]
+    },
+    "name": {
+      "description": "Unique identifier for ICT tool scoped on organization or user, should take the format <organization/user>/<ICT name>.",
+      "examples": [
+        "wipp/threshold"
+      ],
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Version"
+        }
+      ],
+      "description": "Version of ICT, semantic versioning is recommended.",
+      "examples": [
+        "1.1.1"
+      ]
+    },
+    "container": {
+      "description": "Direct link to hosted ICT container image, should take the format <registry path>/<image repository>:<tag>, registry path may be omitted and will default to Docker Hub.",
+      "examples": [
+        "wipp/threshold:1.1.1"
+      ],
+      "title": "Container",
+      "type": "string"
+    },
+    "entrypoint": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "Absolute path to initial script or command within packaged image.",
+      "title": "Entrypoint"
+    },
+    "title": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "(optional) Descriptive human-readable name, will default to `name` if omitted.",
+      "examples": [
+        "Thresholding Plugin"
+      ],
+      "title": "Title"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "(optional) Brief description of plugin.",
+      "examples": [
+        "Thresholding methods from ImageJ"
+      ],
+      "title": "Description"
+    },
+    "author": {
+      "description": "Comma separated list of authors, each author name should take the format <first name> <last name>.",
+      "examples": [
+        "Mohammed Ouladi"
+      ],
+      "items": {
+        "$ref": "#/$defs/Author"
+      },
+      "title": "Author",
+      "type": "array"
+    },
+    "contact": {
+      "anyOf": [
+        {
+          "format": "email",
+          "type": "string"
+        },
+        {
+          "format": "uri",
+          "minLength": 1,
+          "type": "string"
+        }
+      ],
+      "description": "Email or link to point of contact (ie. GitHub user page) for questions or issues.",
+      "examples": [
+        "mohammed.ouladi@labshare.org"
+      ],
+      "title": "Contact"
+    },
+    "repository": {
+      "description": "Url for public or private repository hosting source code.",
+      "examples": [
+        "https://github.com/polusai/polus-plugins"
+      ],
+      "format": "uri",
+      "minLength": 1,
+      "title": "Repository",
+      "type": "string"
+    },
+    "documentation": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Url for hosted documentation about using or modifying the plugin.",
+      "title": "Documentation"
+    },
+    "citation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DOI"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "DOI link to relevant citation, plugin user should use this citation when using this plugin."
+    },
+    "inputs": {
+      "items": {
+        "$ref": "#/$defs/IO"
+      },
+      "title": "Inputs",
+      "type": "array"
+    },
+    "outputs": {
+      "items": {
+        "$ref": "#/$defs/IO"
+      },
+      "title": "Outputs",
+      "type": "array"
+    },
+    "ui": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "checkbox": "#/$defs/UICheckbox",
+            "color": "#/$defs/UIColor",
+            "datetime": "#/$defs/UIDatetime",
+            "file": "#/$defs/UIFile",
+            "multiselect": "#/$defs/UIMultiselect",
+            "number": "#/$defs/UINumber",
+            "path": "#/$defs/UIPath",
+            "select": "#/$defs/UISelect",
+            "text": "#/$defs/UIText"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/UIText"
+          },
+          {
+            "$ref": "#/$defs/UINumber"
+          },
+          {
+            "$ref": "#/$defs/UICheckbox"
+          },
+          {
+            "$ref": "#/$defs/UISelect"
+          },
+          {
+            "$ref": "#/$defs/UIMultiselect"
+          },
+          {
+            "$ref": "#/$defs/UIColor"
+          },
+          {
+            "$ref": "#/$defs/UIDatetime"
+          },
+          {
+            "$ref": "#/$defs/UIPath"
+          },
+          {
+            "$ref": "#/$defs/UIFile"
+          }
+        ]
+      },
+      "title": "Ui",
+      "type": "array"
+    },
+    "hardware": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HardwareRequirements"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "specVersion",
+    "name",
+    "version",
+    "container",
+    "entrypoint",
+    "author",
+    "contact",
+    "repository",
+    "inputs",
+    "outputs",
+    "ui"
+  ],
+  "title": "ICT",
+  "type": "object"
+}
