@@ -1,7 +1,8 @@
+# pylint: disable=no-member
 """Hardware Requirements for ICT."""
 from typing import Annotated, Optional, Union
 
-from pydantic import BaseModel, BeforeValidator, Field, TypeAdapter
+from pydantic import BaseModel, BeforeValidator, Field
 
 
 def validate_str(s_t: Optional[int]) -> Union[str, None]:
@@ -12,8 +13,6 @@ def validate_str(s_t: Optional[int]) -> Union[str, None]:
 
 
 StrInt = Annotated[str, BeforeValidator(validate_str)]
-
-# ta = TypeAdapter(StrInt)
 
 
 class CPU(BaseModel):
@@ -31,7 +30,7 @@ class CPU(BaseModel):
         description="Minimum requirement for CPU allocation where 1 CPU unit is equivalent to 1 physical CPU core or 1 virtual core.",
         examples=["100m"],
     )
-    recommended: Optional[StrInt] = Field(
+    cpu_recommended: Optional[StrInt] = Field(
         None,
         alias="recommended",
         description="Recommended requirement for CPU allocation for optimal performance.",
@@ -79,9 +78,27 @@ class GPU(BaseModel):
     )
 
 
+ATTRIBUTES = [
+    "cpu_type",
+    "cpu_min",
+    "cpu_recommended",
+    "memory_min",
+    "memory_recommended",
+    "gpu_enabled",
+    "gpu_required",
+    "gpu_type",
+]
+
+
 class HardwareRequirements(BaseModel):
     """HardwareRequirements object."""
 
     cpu: Optional[CPU] = Field(None, description="CPU requirements.")
     memory: Optional[Memory] = Field(None, description="Memory requirements.")
     gpu: Optional[GPU] = Field(None, description="GPU requirements.")
+
+    def __getattribute__(self, name: str) -> Union[CPU, Memory, GPU]:
+        """Get attribute."""
+        if name in ATTRIBUTES:
+            return super().__getattribute__(name.split("_")[0]).__getattribute__(name)
+        return super().__getattribute__(name)
