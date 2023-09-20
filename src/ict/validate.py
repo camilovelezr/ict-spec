@@ -21,7 +21,6 @@ def validate(file: StrPath) -> ICT:
             data = json.load(f_o)
     else:
         raise ValueError(f"File extension not supported: {file}")
-    print(data)
     return validate(data)
 
 
