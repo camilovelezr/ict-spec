@@ -41,6 +41,6 @@ class IO(BaseModel):
     io_format: Union[list[str], dict] = Field(
         ...,
         alias="format",
-        description="Defines the actual value(s) that the input/output parameter represents"
+        description="Defines the actual value(s) that the input/output parameter"
         + "represents using an ontology schema.",
     )  # TODO ontology
