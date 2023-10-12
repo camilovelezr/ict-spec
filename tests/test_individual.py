@@ -2,7 +2,9 @@
 """Test Pydantic Model."""
 
 import hypothesis.strategies as st
+import pytest
 from hypothesis import given
+from pydantic import ValidationError
 
 from ict.hardware.objects import CPU, GPU, HardwareRequirements, Memory
 from ict.metadata import Metadata
@@ -111,7 +113,7 @@ def test_metadata2(
     cpu_min=st.text(min_size=1),
     cpu_type=st.text(min_size=2, max_size=4),
     cpu_recommended=st.integers(1, 120),
-    memory_min=st.integers(1, 120),
+    memory_min=st.floats(1, 120),
     gpu_enabled=st.booleans(),
     gpu_required=st.booleans(),
 )
@@ -125,5 +127,19 @@ def test_hr(cpu_min, cpu_type, cpu_recommended, memory_min, gpu_enabled, gpu_req
     assert h_r.cpu.cpu_type == cpu_type
     assert h_r.cpu.cpu_recommended == str(cpu_recommended)
     assert h_r.memory.memory_min == str(memory_min)
+    assert h_r.memory.memory_recommended is None
+    assert isinstance(h_r.memory.memory_min, str)
     assert h_r.gpu.gpu_enabled == gpu_enabled
     assert h_r.gpu.gpu_required == gpu_required
+
+
+def test_hr_cpu_fail_1():
+    """Test HardwareRequirements Model."""
+    with pytest.raises(ValidationError):
+        CPU(min=bool, type="2", recommended="3")
+
+
+def test_hr_cpu_fail_2():
+    """Test HardwareRequirements Model."""
+    with pytest.raises(ValidationError):
+        Memory(min=2.3, recommended=True)

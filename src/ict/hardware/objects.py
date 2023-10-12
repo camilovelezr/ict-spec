@@ -5,10 +5,14 @@ from typing import Annotated, Optional, Union
 from pydantic import BaseModel, BeforeValidator, Field
 
 
-def validate_str(s_t: Optional[int]) -> Union[str, None]:
-    """Return a string from int."""
+def validate_str(s_t: Union[int, float, str]) -> Union[str, None]:
+    """Return a string from int, float, or str."""
     if s_t is None:
         return None
+    if isinstance(s_t, str):
+        return s_t
+    if not isinstance(s_t, (int, float)) or isinstance(s_t, bool):
+        raise ValueError("must be an int, float, or str")
     return str(s_t)
 
 
