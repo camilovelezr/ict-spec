@@ -1,13 +1,16 @@
 """ICT model."""
 
-from typing import Optional, Union
+from pathlib import Path
+from typing import Optional, TypeVar, Union
 
+import yaml
 from pydantic import Field, model_validator
 from typing_extensions import Annotated
 
 from ict.hardware import HardwareRequirements
 from ict.io import IO
 from ict.metadata import Metadata
+from ict.tools import clt_dict
 from ict.ui import (
     UICheckbox,
     UIColor,
@@ -20,6 +23,7 @@ from ict.ui import (
     UIText,
 )
 
+StrPath = TypeVar("StrPath", str, Path)
 UIItem = Annotated[
     Union[
         UIText,
@@ -47,7 +51,7 @@ class ICT(Metadata):
     @model_validator(mode="after")
     def validate_ui(self) -> "ICT":
         """Validate that the ui matches the inputs and outputs."""
-        io_dict = {"inputs": [], "outputs": []}
+        io_dict = {"inputs": [], "outputs": []}  # type: ignore
         ui_keys = [ui.key.root.split(".") for ui in self.ui]
         for ui_ in ui_keys:
             io_dict[ui_[0]].append(ui_[1])
@@ -65,3 +69,17 @@ class ICT(Metadata):
                 f"The ui keys must match the inputs and outputs keys. Unmatched: outputs.{set(io_dict['outputs'])-set(output_names)}"
             )
         return self
+
+    @property
+    def clt(self) -> dict:
+        """CWL CommandLineTool from an ICT object."""
+        return clt_dict(self)
+
+    def save_clt(self, cwl_path: StrPath) -> Path:
+        """Save the ICT as CommandLineTool to a file."""
+        assert (
+            str(cwl_path).rsplit(".", maxsplit=1)[-1] == "cwl"
+        ), "Path must end in .cwl"
+        with Path(cwl_path).open("w", encoding="utf-8") as file:
+            yaml.dump(self.clt, file)
+        return Path(cwl_path)

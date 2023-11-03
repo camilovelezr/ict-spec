@@ -1,7 +1,7 @@
 import json
 from functools import singledispatch
 from pathlib import Path
-from typing import TypeVar
+from typing import Any, TypeVar
 
 from yaml import safe_load
 
@@ -11,9 +11,15 @@ StrPath = TypeVar("StrPath", str, Path)
 
 
 @singledispatch
-def validate(file: StrPath) -> ICT:
+def validate(file: Any) -> ICT:
     """Validate an ICT specification."""
-    if str(file).endswith(".yaml"):
+    raise NotImplementedError(f"File type not supported: {file}")
+
+
+@validate.register
+def _(file: StrPath) -> ICT:
+    """Validate an ICT specification."""
+    if str(file).endswith(".yaml") or str(file).endswith(".yml"):
         with open(file, "r", encoding="utf-8") as f_o:
             data = safe_load(f_o)
     elif str(file).endswith(".json"):

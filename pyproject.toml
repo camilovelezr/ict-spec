@@ -8,13 +8,15 @@ version = "0.1.0"
 
 [tool.poetry.dependencies]
 pydantic = {extras = ["email"], version = "^2.3"}
-python = "^3.9"
+python = ">=3.9,<3.12"
 pyyaml = "^6.0.1"
+cwltool = "^3.1.20231020140205"
+cwl-utils = "^0.30"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.0"
-nox = "^2023.4.22"
 hypothesis = "^6.84.3"
+nox = "^2023.4.22"
+pytest = "^7.4.0"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
