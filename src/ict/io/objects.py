@@ -1,8 +1,17 @@
 """IO objects for ICT."""
 import enum
+import re
 from typing import Optional, Union
 
 from pydantic import BaseModel, Field
+
+CWL_IO_DICT: dict[str, str] = {
+    "string": "string",
+    "number": "double",
+    "array": "array",
+    "boolean": "boolean",
+    # TODO: File vs Directory?
+}
 
 
 class TypesEnum(str, enum.Enum):
@@ -13,6 +22,15 @@ class TypesEnum(str, enum.Enum):
     ARRAY = "array"
     BOOLEAN = "boolean"
     PATH = "path"
+
+
+def _get_cwl_type(io_name: str, io_type: str) -> str:
+    """Return the CWL type from the IO type."""
+    if io_type == "path":
+        if bool(re.search("dir", io_name, re.I)):
+            return "Directory"
+        return "File"
+    return CWL_IO_DICT[io_type]
 
 
 class IO(BaseModel):
@@ -44,3 +62,26 @@ class IO(BaseModel):
         description="Defines the actual value(s) that the input/output parameter"
         + "represents using an ontology schema.",
     )  # TODO ontology
+
+    @property
+    def _is_optional(self):
+        """Return '?' if optional."""
+        return "" if self.required else "?"
+
+    def _input_to_cwl(self):
+        """Convert inputs to CWL."""
+        cwl_dict_ = {
+            "inputBinding": {"prefix": f"--{self.name}"},
+            "type": f"{_get_cwl_type(self.name, self.io_type)}{self._is_optional}",
+        }
+        return cwl_dict_
+
+    def _output_to_cwl(self):
+        """Convert outputs to CWL."""
+        if self.name == "outDir":
+            cwl_dict_ = {
+                "outputBinding": {"glob": "$(inputs.outDir.basename)"},
+                "type": "Directory",
+            }
+            return cwl_dict_
+        return NotImplementedError
