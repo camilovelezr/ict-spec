@@ -31,9 +31,3 @@ def convert_wipp_hardware_to_ict(
         memory=memory_,
         gpu=gpu_,
     )
-
-
-# pl = pp.ApplyFlatfield
-# hw = pl.resourceRequirements
-# ict_hw = convert_wipp_hardware(hw)
-# 22
