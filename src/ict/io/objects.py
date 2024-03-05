@@ -1,4 +1,5 @@
 """IO objects for ICT."""
+
 import enum
 import re
 from typing import Optional, Union
@@ -15,7 +16,7 @@ CWL_IO_DICT: dict[str, str] = {
 
 
 class TypesEnum(str, enum.Enum):
-    """Types enum for IO."""
+    """Types enum for ICT IO."""
 
     STRING = "string"
     NUMBER = "number"
