@@ -24,7 +24,7 @@ INPUT_TYPE_TO_UI_TYPE: dict[str, str] = {
     "number": "number",
     "boolean": "checkbox",
     "enum": "select",
-    "array": "multiselect",
+    "array": "array",  # can be multiselect or just array
     "integer": "number",
 }
 
@@ -98,15 +98,34 @@ def convert_wipp_ui_to_ict(
             type=ui_type,
         )
     if ui_type in ["select", "multiselect"]:
-        options_ = relevant_input.options["values"]  # type: ignore
-        return dispatch_ui(ui_type)(
-            key=key_,
-            title=title_,
-            description=description_,
-            condition=condition_,
-            fields=options_,
-            type=ui_type,
-        )
+        if "values" in relevant_input.options.keys():  # type: ignore
+            options_ = relevant_input.options["values"]  # type: ignore
+            return dispatch_ui(ui_type)(
+                key=key_,
+                title=title_,
+                description=description_,
+                condition=condition_,
+                fields=options_,
+                type=ui_type,
+            )
+        # possible values are missing
+        # change ui_type to text
+        ui_type = "text"
+
+    if ui_type == "array":
+        if "values" in relevant_input.options.keys():  # type: ignore
+            options_ = relevant_input.options["values"]  # type: ignore
+            return dispatch_ui("multiselect")(
+                key=key_,
+                title=title_,
+                description=description_,
+                condition=condition_,
+                fields=options_,
+                type=ui_type,
+            )
+        # change ui_type to text
+        ui_type = "text"
+
     return dispatch_ui(ui_type)(
         key=key_,
         title=title_,
