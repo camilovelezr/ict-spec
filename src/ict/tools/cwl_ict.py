@@ -19,13 +19,13 @@ def requirements(ict_: ICT) -> dict:
 
 
 def clt_dict(ict_: ICT) -> dict:
-    """Return a CommandLineTool from an ICT object."""
+    """Return a dict of a CommandLineTool from an ICT object."""
     clt_ = {
         "class": "CommandLineTool",
         "cwlVersion": "v1.2",
         "inputs": {
             io.name: io._input_to_cwl()  # pylint: disable=W0212
-            for io in ict_.inputs  # type: ignore
+            for io in ict_.inputs + ict_.outputs  # type: ignore
         },
         "outputs": {
             io.name: io._output_to_cwl()  # pylint: disable=W0212
