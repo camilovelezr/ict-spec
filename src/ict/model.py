@@ -58,18 +58,32 @@ class ICT(Metadata):
             )
         return self
 
+    def to_clt(self, network_access: bool = False) -> dict:
+        """Convert ICT to CWL CommandLineTool.
+
+
+        Args:
+            network_access: bool
+                Default is `False`. If set to `True`, the
+                requirements of the CLT will include
+                `networkAccess`: `True`.
+
+        Returns: `dict` representation of the CLT.
+        """
+        return clt_dict(self, network_access)
+
     @property
     def clt(self) -> dict:
-        """CWL CommandLineTool from an ICT object."""
-        return clt_dict(self)
+        """Convenience property of object as CommandLineTool with no network access."""
+        return clt_dict(self, network_access=False)
 
-    def save_clt(self, cwl_path: StrPath) -> Path:
+    def save_clt(self, cwl_path: StrPath, network_access: bool = False) -> Path:
         """Save the ICT as CommandLineTool to a file."""
         assert (
             str(cwl_path).rsplit(".", maxsplit=1)[-1] == "cwl"
         ), "Path must end in .cwl"
         with Path(cwl_path).open("w", encoding="utf-8") as file:
-            yaml.dump(self.clt, file)
+            yaml.dump(self.to_clt(network_access), file)
         return Path(cwl_path)
 
     def save_yaml(self, yaml_path: StrPath) -> Path:
