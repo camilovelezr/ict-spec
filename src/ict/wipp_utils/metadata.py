@@ -86,6 +86,10 @@ def convert_wipp_metadata_to_ict(wipp: Plugin, **kwargs) -> ICTMetadata:
         _args["author"] = ["First Last"]
     if _args["contact"] is None:
         _args["contact"] = "author@ict.com"
+    if _args["entrypoint"] is None:
+        _args["entrypoint"] = "[python3, main.py]"
+    if _args["repository"] is None or _args["repository"] == "":
+        _args["repository"] = "https://github.com/polusai/image-tools"
     _kwargs_keys = set(kwargs.keys())
     _double_args = _args_set.intersection(_kwargs_keys)
     for arg in _double_args:
@@ -98,7 +102,7 @@ def convert_wipp_metadata_to_ict(wipp: Plugin, **kwargs) -> ICTMetadata:
         name=_args["name"],  # type: ignore
         version=_args["version"],  # type: ignore
         container=_args["container"],
-        entrypoint=_args["entrypoint"],
+        entrypoint=_args["entrypoint"],  # type: ignore
         title=_args["title"],
         description=_args["description"],
         author=_args["author"],  # type: ignore
