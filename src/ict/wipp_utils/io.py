@@ -39,6 +39,9 @@ def convert_wipp_io_to_ict(wipp: Union[Input, Output]) -> IO:
     else:
         # default to [<inputname>] just for conversion
         format_ = [wipp.name]
+    if description_ is None:
+        description_ = ""
+    name_ = name_.replace("_", "")  # ICT does not allow underscores in names
     return IO(
         name=name_,
         type=type_,  # type: ignore
