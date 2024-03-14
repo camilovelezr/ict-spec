@@ -170,7 +170,7 @@ class Metadata(BaseModel):
     def check_container(cls, value):
         """Check the container follows the correct format."""
         if not bool(
-            re.match(r"^[a-zA-Z]*\/{0,1}[a-zA-Z_\-]+:[a-zA-Z0-9_\.\-]+$", value)
+            re.match(r"^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+:[a-zA-Z0-9_\.\-]+$", value)
         ):
             raise ValueError(
                 "The name must be in the format <registry path>/<image repository>:<tag>"

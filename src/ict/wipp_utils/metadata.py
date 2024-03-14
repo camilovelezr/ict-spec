@@ -28,7 +28,8 @@ def _get_ict_author(author: str) -> Union[list[str], None]:
     try:
         if "," in author:
             r_s = [" ".join(x.lstrip(" ").split(" ")[0:2]) for x in author.split(",")]
-        r_s = [" ".join(author.split(" ")[0:2])]
+        else:
+            r_s = [" ".join(author.split(" ")[0:2])]
     except Exception:  # pylint: disable=broad-except
         return None
     return r_s

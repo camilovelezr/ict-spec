@@ -1,6 +1,8 @@
 # pylint: disable=no-name-in-module, import-error
 """WIPP UI functions."""
 
+import logging
+import re
 from typing import Callable, Union
 
 from polus.plugins._plugins.io import Input as WIPPInput  # type: ignore
@@ -19,6 +21,7 @@ from ict.ui import (
     UIText,
 )
 
+logger = logging.getLogger("ict")
 INPUT_TYPE_TO_UI_TYPE: dict[str, str] = {
     "string": "text",
     "number": "number",
@@ -76,7 +79,23 @@ def convert_wipp_ui_to_ict(
     key_ = wipp_ui.key
     title_ = wipp_ui.title
     description_ = wipp_ui.description
-    condition_ = wipp_ui.condition
+    if wipp_ui.condition is not None:
+        # match using regex
+        condition_regex = re.compile(
+            r"(inputs|outputs)\.\w+(==|!=|<|>|<=|>=|&&)'?\w+'?$"
+        )
+        regex_match = re.search(condition_regex, wipp_ui.condition)
+        if regex_match is None:
+            logger.warning(
+                "Condition statement for %s is not in the correct format,"
+                "default template will be used",
+                key_,
+            )
+            condition_ = f"inputs.{key_.split('.')[1]}==value"
+        else:  # regex matched
+            condition_ = regex_match.group(0)
+    else:
+        condition_ = None
     if key_ == "fieldsets":
         raise NotImplementedError("fieldsets in UI not implemented")
     else:
