@@ -80,7 +80,9 @@ def convert_wipp_metadata_to_ict(wipp: Plugin, **kwargs) -> ICTMetadata:
     _args["contact"] = _get_ict_email(wipp.author)
     _args["repository"] = wipp.repository
     if _args["name"] is None or _args["author"] is None or _args["contact"] is None:
-        logger.warning("Check values of Metadata. Defaults used for conversion.")
+        logger.warning(
+            f"Check values of metadata in {wipp.name}. Defaults used for conversion."
+        )
     if _args["name"] is None:
         _args["name"] = "organization/ICTname"
     if _args["author"] is None:
