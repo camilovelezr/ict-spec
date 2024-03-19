@@ -93,8 +93,17 @@ class ICT(Metadata):
             "yml",
         ], "Path must end in .yaml or .yml"
         with Path(yaml_path).open("w", encoding="utf-8") as file:
-            yaml.dump(self.model_dump(mode="json"), file)
+            yaml.dump(
+                self.model_dump(mode="json", exclude_none=True, by_alias=True), file
+            )
         return Path(yaml_path)
+
+    def save_yml(self, yml_path: StrPath) -> Path:
+        """Save the ICT as yaml to a file.
+
+        Alias for `save_yaml`.
+        """
+        return self.save_yaml(yml_path)
 
     @singledispatchmethod
     @classmethod
