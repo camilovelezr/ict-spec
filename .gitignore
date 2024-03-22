@@ -6,3 +6,5 @@ poetry.lock
 
 # hypothesis-python
 .hypothesis
+
+/tmp
