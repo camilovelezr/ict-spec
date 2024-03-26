@@ -14,7 +14,7 @@ from pydantic import model_validator
 from ict.hardware import HardwareRequirements
 from ict.io import IO
 from ict.metadata import Metadata
-from ict.tools import clt_dict
+from ict.tools import clt_dict, ict_dict
 from ict.ui import UIItem
 from ict.wipp_utils import (
     convert_wipp_hardware_to_ict,
@@ -74,8 +74,13 @@ class ICT(Metadata):
 
     @property
     def clt(self) -> dict:
-        """Convenience property of object as CommandLineTool with no network access."""
+        """CWL CommandLineTool from an ICT object."""
         return clt_dict(self, network_access=False)
+    
+    @property
+    def ict(self) -> dict:
+        """ICT yaml from an ICT object."""
+        return ict_dict(self)
 
     def save_clt(self, cwl_path: StrPath, network_access: bool = False) -> Path:
         """Save the ICT as CommandLineTool to a file."""
@@ -85,6 +90,15 @@ class ICT(Metadata):
         with Path(cwl_path).open("w", encoding="utf-8") as file:
             yaml.dump(self.to_clt(network_access), file)
         return Path(cwl_path)
+
+    def save_ict(self, ict_path: StrPath) -> Path:
+        """Save the ICT as YAML to a file. Useful for when converting CLT->ICT"""
+        assert (
+            str(ict_path).rsplit(".", maxsplit=1)[-1] in ["yml", "yaml"]
+        ), "Path must end in .yml or .yaml"
+        with Path(ict_path).open("w", encoding="utf-8") as file:
+            yaml.dump(self.ict, file)
+        return Path(ict_path)
 
     def save_yaml(self, yaml_path: StrPath) -> Path:
         """Save the ICT as yaml to a file."""
@@ -138,3 +152,4 @@ class ICT(Metadata):
         """Convert WIPP Plugin to ICT."""
         wipp_ = _load_plugin(wipp)
         return cls.from_wipp(wipp_, **kwargs)
+
