@@ -5,8 +5,8 @@ import logging
 import re
 from typing import Callable, Union
 
-from polus.plugins._plugins.io import Input as WIPPInput  # type: ignore
-from polus.plugins._plugins.models.pydanticv2.wipp import UI1, UI2  # type: ignore
+from polus.tools.plugins._plugins.io import Input as WIPPInput  # type: ignore
+from polus.tools.plugins._plugins.models.pydanticv2.wipp import UI1, UI2  # type: ignore
 
 from ict.ui import (
     UICheckbox,

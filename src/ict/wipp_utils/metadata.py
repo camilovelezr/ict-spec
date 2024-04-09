@@ -5,7 +5,7 @@ import logging
 import re
 from typing import Any, Union
 
-from polus.plugins import Plugin  # type: ignore
+from polus.tools.plugins import Plugin  # type: ignore
 
 from ict.metadata import Metadata as ICTMetadata
 

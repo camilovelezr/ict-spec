@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Optional, TypeVar
 
 import yaml  # type: ignore
-from polus.plugins import Plugin  # type: ignore
-from polus.plugins._plugins.classes import _load_plugin  # type: ignore
+from polus.tools.plugins import Plugin  # type: ignore
+from polus.tools.plugins._plugins.classes import _load_plugin  # type: ignore
 from pydantic import model_validator
 
 from ict.hardware import HardwareRequirements

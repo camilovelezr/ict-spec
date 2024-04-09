@@ -3,7 +3,7 @@
 
 from typing import Union
 
-from polus.plugins._plugins.io import Input, Output  # type: ignore
+from polus.tools.plugins._plugins.io import Input, Output  # type: ignore
 
 from ict.io import IO
 

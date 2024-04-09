@@ -1,7 +1,7 @@
 """WIPP Hardware Requirements Functions."""
 
 # import polus.plugins as pp
-from polus.plugins._plugins.models.pydanticv2.wipp import (
+from polus.tools.plugins._plugins.models.pydanticv2.wipp import (
     ResourceRequirements as WIPPResourceRequirements,
 )
 
