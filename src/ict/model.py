@@ -11,7 +11,7 @@ from pydantic import model_validator
 from ict.hardware import HardwareRequirements
 from ict.io import IO
 from ict.metadata import Metadata
-from ict.tools import clt_dict
+from ict.tools import clt_dict, ict_dict
 from ict.ui import UIItem
 
 StrPath = TypeVar("StrPath", str, Path)
@@ -65,8 +65,13 @@ class ICT(Metadata):
 
     @property
     def clt(self) -> dict:
-        """Convenience property of object as CommandLineTool with no network access."""
+        """CWL CommandLineTool from an ICT object."""
         return clt_dict(self, network_access=False)
+    
+    @property
+    def ict(self) -> dict:
+        """ICT yaml from an ICT object."""
+        return ict_dict(self)
 
     def save_clt(self, cwl_path: StrPath, network_access: bool = False) -> Path:
         """Save the ICT as CommandLineTool to a file."""
